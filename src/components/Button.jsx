@@ -1,8 +1,7 @@
-import React, { useState } from "react";
+import React from "react";
 
-const Button = function (props) {
-  console.log(props);
-  return <div className={props.symbol.classN}>{props.symbol.symbol}</div>;
+const Button = function (button) {
+  return <div className={button.symbol.classN}>{button.symbol.key}</div>;
 };
 
 export default Button;
