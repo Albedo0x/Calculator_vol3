@@ -1,10 +1,10 @@
 import React from "react";
 
-const CalcScreen = function (props) {
+const CalcScreen = function ({ screen }) {
   return (
     <div className="calc-screen">
       <div className="calc-screen__field">
-        <p id="screen">{props.number}</p>
+        <p id="screen">{screen}</p>
       </div>
     </div>
   );
