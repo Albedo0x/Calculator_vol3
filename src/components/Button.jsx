@@ -1,97 +1,74 @@
 import React from "react";
+import calculation from "../functions/calculation.js";
 
 let number1 = "0";
 let number2 = "";
 let operation = "";
 let state = false;
 
-const Button = function ({ screen, symbol, setScreen }) {
+const Button = function ({ symbol, setScreen }) {
   function changeNumber() {
     if (symbol.classN === "calc-btn clear-all") {
-      setScreen("0");
+      calcState("0", false);
     }
     if (symbol.classN === "calc-btn btn-digit") {
       if (state === false) {
         if (operation === "" && number2 === "" && number1 === "0") {
           number1 = symbol.key;
           setScreen(number1);
-          console.log(number1, operation, number2, state);
           return;
         }
-        if (operation === "" && number2 === "" && number1 != "0") {
+        if (operation === "" && number2 === "" && number1 !== "0") {
           number1 = number1 + symbol.key;
-          console.log(number1, operation, number2, state);
           setScreen(number1);
           return;
         } else {
           number2 = number2 + symbol.key;
-          console.log(number1, operation, number2, state);
           setScreen(number2);
+          return;
         }
       } else {
         number1 = symbol.key;
-        console.log(number1, operation, number2, state);
         setScreen(number1);
         state = false;
+        return;
       }
     }
 
     if (symbol.classN === "calc-btn btn-oper") {
+      operation = symbol.key;
+      setScreen(symbol.key);
       if (number1 !== "" && state === true) {
         state = false;
-        operation = symbol.key;
-        console.log(number1, operation, number2, state);
-        setScreen(operation);
       } else {
-        operation = symbol.key;
-        console.log(number1, operation, number2, state);
-        setScreen(operation);
+        return;
       }
     }
 
     if (symbol.classN === "calc-btn btn-result") {
       if (number2 === "" && operation !== "") {
         number1 = calculation(number1, number1, operation);
-        console.log(number1, operation, number2, state);
-        calcState(number1);
       }
       if (number2 === "" && operation === "") {
-        console.log(number1, operation, number2, state);
-        calcState(number1);
+        return;
       } else {
         number1 = calculation(number1, number2, operation);
-        console.log(number1, operation, number2, state);
-        calcState(number1);
       }
+      calcState(number1, true);
     }
   }
 
-  function calcState(info) {
+  function calcState(info, status) {
     setScreen(info);
-    state = true;
+    state = status;
     number2 = "";
     operation = "";
-  }
 
-  function calculation(number1, number2, operation) {
-    switch (operation) {
-      case "+":
-        number1 = +(+number1 + +number2).toFixed(3);
-        return number1;
-      case "-":
-        number1 = +(+number1 - +number2).toFixed(3);
-        return number1;
-      case "*":
-        number1 = +(+number1 * +number2).toFixed(3);
-        return number1;
-      case "÷":
-        number1 = +(+number1 / +number2).toFixed(3);
-        return number1;
-      case "^":
-        number1 = +((+number1) ** +number2).toFixed(3);
-        return number1;
-      default:
-        return;
+    if (status === false) {
+      number1 = "0";
+      return;
+    } else {
+      return;
     }
   }
 
