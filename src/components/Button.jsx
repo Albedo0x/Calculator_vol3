@@ -5,12 +5,30 @@ let number1 = "0";
 let number2 = "";
 let operation = "";
 let state = false;
+let pullItem;
 
 const Button = function ({ symbol, setScreen }) {
   function changeNumber() {
     if (symbol.classN === "calc-btn clear-all") {
       calcState("0", false);
     }
+
+    if (symbol.classN === "calc-btn btn-save") {
+      localStorage.setItem("savedNumber", number1);
+    }
+
+    if (symbol.classN === "calc-btn btn-pull") {
+      pullItem = localStorage.getItem("savedNumber");
+      if (operation === "" && number2 === "") {
+        number1 = pullItem;
+        setScreen(number1);
+      }
+      if (operation !== "") {
+        number2 = pullItem;
+        setScreen(number2);
+      }
+    }
+
     if (symbol.classN === "calc-btn btn-digit") {
       if (state === false) {
         if (operation === "" && number2 === "" && number1 === "0") {
