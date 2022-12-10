@@ -27,90 +27,107 @@ const Calculator = function () {
     { key: "=", func: setResult },
   ];
 
-  const [screen, setScreen] = useState("0");
-  const [operation, setOperation] = useState("");
-  const [state, setState] = useState(true);
-  const [number1, setNumber1] = useState("0");
-  const [number2, setNumber2] = useState("");
+  const [calcState, setCalcState] = useState({
+    screen: "0",
+    number1: "0",
+    number2: "",
+    operation: "",
+    state: true,
+  });
 
   function setStorage() {
-    localStorage.setItem("savedNumber", number1);
+    localStorage.setItem("savedNumber", calcState.number1);
   }
 
   function getStorage() {
     let pullItem = localStorage.getItem("savedNumber");
-    setScreen(pullItem);
-    operation ? setNumber2(pullItem) : setNumber1(pullItem);
+    calcState.operation
+      ? setCalcState({ ...calcState, screen: pullItem, number2: pullItem })
+      : setCalcState({ ...calcState, screen: pullItem, number1: pullItem });
   }
 
   function clearing() {
-    calcState("0", false);
+    calcToState("0", false);
   }
 
   function setAction(key) {
-    setOperation(key);
-    setScreen(key);
-    if (state) {
-      setState(false);
-    }
+    setCalcState({ ...calcState, screen: key, operation: key, state: false });
   }
 
-  function calcState(info, status) {
-    setNumber1(info);
-    setScreen(info);
-    setState(status);
-    setNumber2("");
-    setOperation("");
-
-    if (!status) {
-      setNumber1("0");
-    }
+  function calcToState(info, status) {
+    setCalcState({
+      screen: info,
+      number1: info,
+      number2: "",
+      operation: "",
+      state: status,
+    });
   }
 
   function setResult() {
-    let result = number1;
-    if (!number2 && operation) {
-      result = calculation(number1, number1, operation);
+    let result = calcState.number1;
+    if (!calcState.number2 && calcState.operation) {
+      result = calculation(
+        calcState.number1,
+        calcState.number1,
+        calcState.operation
+      );
     }
-    if (number2) {
-      result = calculation(number1, number2, operation);
+    if (calcState.number2) {
+      result = calculation(
+        calcState.number1,
+        calcState.number2,
+        calcState.operation
+      );
     }
-    calcState(result, true);
+    calcToState(result, true);
   }
 
   function setDigit(key) {
-    if (!state) {
-      if (!operation && number1 === "0") {
-        setNumber1(key);
-        setScreen(key);
+    if (!calcState.state) {
+      if (!calcState.operation && calcState.number1 === "0") {
+        setCalcState((prev) => {
+          return { ...prev, screen: key, number1: key };
+        });
         return;
       }
-      if (!operation && number1 !== "0") {
-        setNumber1((prev) => prev + key);
-        setScreen((prev) => prev + key);
+      if (!calcState.operation && calcState.number1 !== "0") {
+        setCalcState((prev) => {
+          return {
+            ...prev,
+            screen: prev.screen + key,
+            number1: prev.number1 + key,
+          };
+        });
         return;
       }
-      if (operation && !number2) {
-        setNumber2((prev) => prev + key);
-        setScreen(key);
+      if (calcState.operation && !calcState.number2) {
+        setCalcState((prev) => {
+          return { ...prev, screen: key, number2: key };
+        });
         return;
       }
-      if (operation && number2) {
-        setNumber2((prev) => prev + key);
-        setScreen((prev) => prev + key);
+      if (calcState.operation && calcState.number2) {
+        setCalcState((prev) => {
+          return {
+            ...prev,
+            screen: prev.screen + key,
+            number2: prev.number2 + key,
+          };
+        });
         return;
       }
     }
-    if (state) {
-      setNumber1(key);
-      setScreen(key);
-      setState(false);
+    if (calcState.state) {
+      setCalcState((prev) => {
+        return { ...prev, screen: key, number1: key, state: false };
+      });
     }
   }
 
   return (
     <div className="calc">
-      <CalcScreen screen={screen} />
+      <CalcScreen screen={calcState.screen} />
       <ButtonList buttons={buttons} />
     </div>
   );
