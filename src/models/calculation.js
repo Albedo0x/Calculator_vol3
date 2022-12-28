@@ -1,4 +1,4 @@
-function calculation(number1, number2, operation) {
+export function calculation(number1, number2, operation) {
   switch (operation) {
     case "+":
       number1 = +(+number1 + +number2).toFixed(3);
@@ -18,6 +18,4 @@ function calculation(number1, number2, operation) {
     default:
       return;
   }
-}
-
-export default calculation;
+};
