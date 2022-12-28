@@ -1,13 +1,13 @@
 import React from "react";
 import Button from "./Button";
-import buttons from "../functions/buttonscontext";
+import { layout as buttons } from "../models";
 
-const ButtonList = function ({ setScreen }) {
+const ButtonList = function ({ setScreen, onPush }) {
   return (
     <div className="calc-input">
-      {buttons.map((button) => (
-        <Button symbol={button} key={button.id} setScreen={setScreen} />
-      ))}
+      {buttons.map((button) => {
+        return <Button model={button} key={button.label} setScreen={setScreen} onPush={onPush}/>
+      })}
     </div>
   );
 };

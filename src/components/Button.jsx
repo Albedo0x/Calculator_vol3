@@ -1,5 +1,6 @@
 import React from "react";
-import calculation from "../functions/calculation.js";
+import { ButtonType, ButtonCategory, calculation } from '../models';
+import classnames from 'classnames';
 
 let number1 = "0";
 let number2 = "";
@@ -7,17 +8,19 @@ let operation = "";
 let state = false;
 let pullItem;
 
-const Button = function ({ symbol, setScreen }) {
+const Button = function ({ model, setScreen, onPush }) {
   function changeNumber() {
-    if (symbol.classN === "calc-btn clear-all") {
+    onPush(model);
+
+    if (model.type === ButtonType.Clear) {
       calcState("0", false);
     }
 
-    if (symbol.classN === "calc-btn btn-save") {
+    if (model.type === ButtonType.MemorySave) {
       localStorage.setItem("savedNumber", number1);
     }
 
-    if (symbol.classN === "calc-btn btn-pull") {
+    if (model.type === ButtonType.MemoryRestore) {
       pullItem = localStorage.getItem("savedNumber");
       if (operation === "" && number2 === "") {
         number1 = pullItem;
@@ -29,33 +32,33 @@ const Button = function ({ symbol, setScreen }) {
       }
     }
 
-    if (symbol.classN === "calc-btn btn-digit") {
+    if (model.category === ButtonCategory.Digit) {
       if (state === false) {
         if (operation === "" && number2 === "" && number1 === "0") {
-          number1 = symbol.key;
+          number1 = model.label;
           setScreen(number1);
           return;
         }
         if (operation === "" && number2 === "" && number1 !== "0") {
-          number1 = number1 + symbol.key;
+          number1 = number1 + model.label;
           setScreen(number1);
           return;
         } else {
-          number2 = number2 + symbol.key;
+          number2 = number2 + model.label;
           setScreen(number2);
           return;
         }
       } else {
-        number1 = symbol.key;
+        number1 = model.label;
         setScreen(number1);
         state = false;
         return;
       }
     }
 
-    if (symbol.classN === "calc-btn btn-oper") {
-      operation = symbol.key;
-      setScreen(symbol.key);
+    if (model.category === ButtonCategory.Operation) {
+      operation = model.label;
+      setScreen(model.label);
       if (number1 !== "" && state === true) {
         state = false;
       } else {
@@ -63,7 +66,7 @@ const Button = function ({ symbol, setScreen }) {
       }
     }
 
-    if (symbol.classN === "calc-btn btn-result") {
+    if (model.type === ButtonType.Execute) {
       if (number2 === "" && operation !== "") {
         number1 = calculation(number1, number1, operation);
       }
@@ -91,8 +94,8 @@ const Button = function ({ symbol, setScreen }) {
   }
 
   return (
-    <div className={symbol.classN} onClick={changeNumber}>
-      {symbol.key}
+    <div className={classnames('calc-btn', model.className)} onClick={changeNumber}>
+      {model.label}
     </div>
   );
 };
