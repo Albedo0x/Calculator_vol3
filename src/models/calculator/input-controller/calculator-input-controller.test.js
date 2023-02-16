@@ -1,4 +1,4 @@
-import { Calculator } from './calculator';
+import { Calculator } from '../calculator';
 import { CalculatorInputController } from './calculator-input-controller';
 
 describe('Calculator input controller', () => {
@@ -57,7 +57,7 @@ describe('Calculator input controller', () => {
                 { type: 'execute' },
             ]);
 
-            expect(controller.viewResult()).toStrictEqual('63.000');
+            expect(controller.calculator.getResult()).toBe(63);
         });
 
         test('Add 2 floating point numbers', () => {
@@ -70,7 +70,6 @@ describe('Calculator input controller', () => {
                 { type: 'execute' },
             ]);
 
-            expect(controller.viewResult()).toStrictEqual('0.300');
             expect(controller.calculator.getResult()).toBe(0.30000000000000004); // lmao
         });
     });

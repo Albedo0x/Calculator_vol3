@@ -1,4 +1,5 @@
-import { STATE, OPERATION } from './constants';
+import { BasicCalculationEngine } from './calculation-engines';
+import { StateManager } from './state-manager/state-manager';
 
 export class CalculationError extends Error {
     constructor(calculator) {
@@ -8,9 +9,17 @@ export class CalculationError extends Error {
 
 export class Calculator {
     #result = null;
+    #engine = null;
+    #stateManager = null;
 
     constructor() {
+        this.#engine = new BasicCalculationEngine();
+        this.#stateManager = new StateManager(this);
         this.clear();
+    }
+
+    onEvent(event, eventData) {
+        this.#stateManager.dispatch(event, eventData);
     }
 
     getDebugData() {
@@ -29,44 +38,13 @@ export class Calculator {
         this.#result = null;
     }
 
-    getResult({ formatted = false } = {}) {
-        return formatted ? this.formatResult(this.#result) : this.#result;
-    }
-
     get state() {
-        const stateCode = [
-            this.number1,
-            this.number2,
-            this.operation,
-            this.#result,
-        ]
-            .map(x => x === null ? 0 : 1)
-            .join('');
-
-        const inferredState = `state_${stateCode}`;
-
-        if (Object.values(STATE).includes(inferredState)) {
-            return inferredState;
-        }
-
-        throw new Error(`Invalid state: ${this.getDebugData()}`);
+        return this.#stateManager.getState();
     }
 
     calculate() {
-        const { number1, number2: n2, operation } = this;
-
-        let result = NaN;
-        const number2 = n2 ?? number1;
-
-        switch (operation) {
-            case OPERATION.ADD: result = number1 + number2; break;
-            case OPERATION.SUBTRACT: result = number1 - number2; break;
-            case OPERATION.MULTIPLY: result = number1 * number2; break;
-            case OPERATION.DIVIDE: result = number1 / number2; break;
-            case OPERATION.EXPONENT: result = number1 ** number2; break;
-            default:
-                // no default
-        }
+        const { number1, number2, operation } = this;
+        const result = this.#engine.exec(operation, [number1, number2]);
 
         if (isNaN(result) || !isFinite(result)) {
             const err = new CalculationError(this);
@@ -75,50 +53,57 @@ export class Calculator {
             throw err;
         }
 
-        // console.log('~~ calculated ~~', result, this.getDebugData());
-
+        // NOTE: shift values, operation remained unchanged.
         this.number1 = result;
         this.number2 = null;
         this.#result = result;
+
+        return this;
     }
 
-    formatResult(value) {
-        return value.toFixed(3);
-    }
-
-    setNumber1(value) {
-        this.number1 = value;
-    }
-
-    setNumber2(value) {
-        this.number2 = value;
+    getResult() {
+        return this.#result;
     }
 
     getNumber1() {
         return this.number1;
     }
 
+    setNumber1(value) {
+        this.number1 = value;
+
+        return this;
+    }
+
     getNumber2() {
         return this.number2;
     }
 
-    setOperation(operation) {
-        this.operation = operation;
+    setNumber2(value) {
+        this.number2 = value;
+
+        return this;
     }
 
     getOperation() {
         return this.operation;
     }
 
-    // what to save???
-    save(value) {
-        localStorage.setItem('savedNumber', value);
+    setOperation(operation) {
+        this.operation = operation;
+
+        return this;
     }
 
-    // what to restore???
-    restore() {
-        const savedNumber = Number(localStorage.getItem('savedNumber'));
+    // TODO: memory support.
+    // save(value) {
+    //     localStorage.setItem('savedNumber', value);
+    // }
 
-        return savedNumber;
-    }
+    // // what to restore???
+    // restore() {
+    //     const savedNumber = Number(localStorage.getItem('savedNumber'));
+
+    //     return savedNumber;
+    // }
 }

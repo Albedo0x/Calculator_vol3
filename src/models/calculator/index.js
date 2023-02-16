@@ -1,2 +1,3 @@
 export * from './calculator';
-export * from './calculator-input-controller';
+export * from './input-controller';
+export * from './output-controller';

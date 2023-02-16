@@ -7,6 +7,13 @@ export const STATE = {
     EXECUTED: 'state_1011',
 };
 
+export const EVENT = {
+    ON_CLEAR: 'on_clear',
+    ON_NUMBER: 'on_number',
+    ON_OPERATION: 'on_operation',
+    ON_EXECUTE: 'on_execute',
+};
+
 export const OPERATION = {
     ADD: '+',
     SUBTRACT: '-',
