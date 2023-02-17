@@ -6,7 +6,9 @@ export class CalculatorOutputController {
     }
 
     viewResult() {
-        return this.calculator.getResult({ formatted: false });
+        const result = this.calculator.getResult();
+
+        return result;
     }
 
     getView() {

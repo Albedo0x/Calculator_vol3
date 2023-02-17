@@ -1,5 +1,5 @@
 import { ButtonCategory, ButtonType } from '../../button';
-import { EVENT } from '../constants';
+import { EVENT, STATE } from '../constants';
 import { toArray } from '../../../utils';
 
 export class CalculatorInputController {
@@ -12,11 +12,8 @@ export class CalculatorInputController {
             byType: {
                 [ButtonType.Clear]: () => this.#onClear(),
                 [ButtonType.Execute]: () => this.#onExecute(),
-                [ButtonType.MemorySave]: () => { console.log('TODO'); },
-                [ButtonType.MemoryRestore]: () => { console.log('TODO'); },
-                // TODO: implement memory.
-                // [ButtonType.MemorySave]: this.calculator.save,
-                // [ButtonType.MemoryRestore]: this.calculator.restore,
+                [ButtonType.MemorySave]: () => this.#onMemorySave(),
+                [ButtonType.MemoryRestore]: () => this.#onMemoryRestore(),
             },
             byCategory: {
                 [ButtonCategory.Digit]: label => this.#onDigit(label),
@@ -29,11 +26,11 @@ export class CalculatorInputController {
     push(buttonOrButtons) {
         for (const button of toArray(buttonOrButtons)) {
             // console.log(`push! [${button.label}]`);
-            this.pushOne(button);
+            this.#pushOne(button);
         }
     }
 
-    pushOne(button) {
+    #pushOne(button) {
         const { type, category, label } = button;
         const calculatorAction = this.#buttonToActionMapping.byType[type]
             || this.#buttonToActionMapping.byCategory[category];
@@ -73,12 +70,22 @@ export class CalculatorInputController {
         this.#clearBuffer();
     }
 
-    // TODO:
-    // #onMemoryOperation() {
-    //     if (this.operation !== null) {
-    //         this.setNumber2(savedNumber);
-    //     } else if (this.number2 === null) {
-    //         this.setNumber1(savedNumber);
-    //     }
-    // }
+    #onMemorySave() {
+        switch (this.calculator.state) {
+            case STATE.FIRST_NUMBER:
+                return this.calculator.save(this.calculator.getNumber1());
+            case STATE.NUMBERS_AND_OPERATION:
+                return this.calculator.save(this.calculator.getNumber2());
+            case STATE.EXECUTED:
+                return this.calculator.save(this.calculator.getResult());
+            default:
+                // no default
+        }
+    }
+
+    #onMemoryRestore() {
+        const value = this.calculator.restore();
+
+        this.calculator.onEvent(EVENT.ON_NUMBER, { number: value });
+    }
 }

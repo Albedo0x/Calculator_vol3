@@ -1,5 +1,6 @@
 import { BasicCalculationEngine } from './calculation-engines';
 import { StateManager } from './state-manager/state-manager';
+import { OneItemStorage } from './storage';
 
 export class CalculationError extends Error {
     constructor(calculator) {
@@ -8,14 +9,19 @@ export class CalculationError extends Error {
 }
 
 export class Calculator {
+    #number1 = null;
+    #number2 = null;
+    #operation = null;
     #result = null;
+
     #engine = null;
     #stateManager = null;
+    #storage = null;
 
     constructor() {
         this.#engine = new BasicCalculationEngine();
         this.#stateManager = new StateManager(this);
-        this.clear();
+        this.#storage = new OneItemStorage();
     }
 
     onEvent(event, eventData) {
@@ -32,9 +38,9 @@ export class Calculator {
     }
 
     clear() {
-        this.number1 = null;
-        this.number2 = null;
-        this.operation = null;
+        this.#number1 = null;
+        this.#number2 = null;
+        this.#operation = null;
         this.#result = null;
     }
 
@@ -43,8 +49,10 @@ export class Calculator {
     }
 
     calculate() {
-        const { number1, number2, operation } = this;
-        const result = this.#engine.exec(operation, [number1, number2]);
+        const result = this.#engine.exec(
+            this.#operation,
+            [this.#number1, this.#number2],
+        );
 
         if (isNaN(result) || !isFinite(result)) {
             const err = new CalculationError(this);
@@ -54,8 +62,8 @@ export class Calculator {
         }
 
         // NOTE: shift values, operation remained unchanged.
-        this.number1 = result;
-        this.number2 = null;
+        this.#number1 = result;
+        this.#number2 = null;
         this.#result = result;
 
         return this;
@@ -66,44 +74,40 @@ export class Calculator {
     }
 
     getNumber1() {
-        return this.number1;
+        return this.#number1;
     }
 
     setNumber1(value) {
-        this.number1 = value;
+        this.#number1 = value;
 
         return this;
     }
 
     getNumber2() {
-        return this.number2;
+        return this.#number2;
     }
 
     setNumber2(value) {
-        this.number2 = value;
+        this.#number2 = value;
 
         return this;
     }
 
     getOperation() {
-        return this.operation;
+        return this.#operation;
     }
 
     setOperation(operation) {
-        this.operation = operation;
+        this.#operation = operation;
 
         return this;
     }
 
-    // TODO: memory support.
-    // save(value) {
-    //     localStorage.setItem('savedNumber', value);
-    // }
+    save(value) {
+        this.#storage.save(value);
+    }
 
-    // // what to restore???
-    // restore() {
-    //     const savedNumber = Number(localStorage.getItem('savedNumber'));
-
-    //     return savedNumber;
-    // }
+    restore() {
+        return this.#storage.restore();
+    }
 }

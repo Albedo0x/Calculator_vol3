@@ -106,7 +106,7 @@ describe('Calculator', () => {
         });
     });
 
-    describe.skip('Memory', () => {
+    describe('Memory', () => {
         beforeEach(() => {
             localStorage.clear();
         });
