@@ -1,14 +1,16 @@
 import { STATE } from '../constants';
 
 export class CalculatorOutputController {
-    constructor (calculator) {
+    constructor (calculator, config = {}) {
         this.calculator = calculator;
+        this.config = config;
     }
 
     viewResult() {
-        const result = this.calculator.getResult();
+        const { maxLength } = this.config;
+        const result = this.calculator.getResult().toString();
 
-        return result;
+        return maxLength ? result.slice(0, maxLength) : result;
     }
 
     getView() {
@@ -24,7 +26,7 @@ export class CalculatorOutputController {
             case STATE.EXECUTED:
                 return this.viewResult();
             default:
-                return `[${this.calculator.state}]`;
+                return 'ERROR';
         }
     }
 }

@@ -113,10 +113,10 @@ describe('Calculator', () => {
 
         describe('Memory save & restore', () => {
             test('Saves and restores number', () => {
-                const number = 987;
+                const number = '987';
 
-                calculator.save(number);
-                const savedNumber = calculator.restore();
+                calculator.memorySave(number);
+                const savedNumber = calculator.memoryRestore();
 
                 expect(savedNumber).toBe(number);
             });

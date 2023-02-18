@@ -1,4 +1,5 @@
-import { STATE, EVENT } from '../constants';
+import { STATE } from '../constants';
+import { createStateMap } from './state-map';
 
 export class StateManager {
     #state = null;
@@ -6,6 +7,7 @@ export class StateManager {
 
     constructor(calculator) {
         this.#calculator = calculator;
+        this.stateMap = createStateMap(calculator);
         this.#clear();
     }
 
@@ -36,85 +38,4 @@ export class StateManager {
     #getTransition = (event, currentState) => {
         return this.stateMap[currentState]?.[event] || null;
     }
-
-    stateMap = {
-        [STATE.EMPTY]: {
-            [EVENT.ON_NUMBER]: {
-                nextState: STATE.FIRST_NUMBER,
-                action: ({ number }) => { this.#calculator.setNumber1(number); },
-            },
-            [EVENT.ON_OPERATION]: {
-                nextState: STATE.FIRST_NUMBER_AND_OPERATION,
-                action: ({ operation }) => { this.#calculator.setNumber1(0).setOperation(operation); },
-            },
-        },
-        [STATE.FIRST_NUMBER]: {
-            [EVENT.ON_NUMBER]: {
-                nextState: STATE.FIRST_NUMBER,
-                action: ({ number }) => { this.#calculator.setNumber1(number); },
-            },
-            [EVENT.ON_OPERATION]: {
-                nextState: STATE.FIRST_NUMBER_AND_OPERATION,
-                action: ({ operation }) => { this.#calculator.setOperation(operation); },
-            },
-            [EVENT.ON_CLEAR]: {
-                nextState: STATE.EMPTY,
-                action: () => { this.#clear(); },
-            },
-        },
-        [STATE.FIRST_NUMBER_AND_OPERATION]: {
-            [EVENT.ON_NUMBER]: {
-                nextState: STATE.NUMBERS_AND_OPERATION,
-                action: ({ number }) => { this.#calculator.setNumber2(number); },
-            },
-            [EVENT.ON_OPERATION]: {
-                nextState: STATE.ON_OPERATION,
-                action: ({ operation }) => { this.#calculator.setOperation(operation); },
-            },
-            [EVENT.ON_EXECUTE]: {
-                nextState: STATE.EXECUTED,
-                action: () => { this.#calculator.setNumber2(this.#calculator.getNumber1()).calculate(); },
-            },
-            [EVENT.ON_CLEAR]: {
-                nextState: STATE.EMPTY,
-                action: () => { this.#clear(); },
-            },
-        },
-        [STATE.NUMBERS_AND_OPERATION]: {
-            [EVENT.ON_NUMBER]: {
-                nextState: STATE.NUMBERS_AND_OPERATION,
-                action: ({ number }) => { this.#calculator.setNumber2(number); },
-            },
-            [EVENT.ON_OPERATION]: {
-                nextState: STATE.FIRST_NUMBER_AND_OPERATION,
-                action: ({ operation }) => { this.#calculator.calculate().setOperation(operation); },
-            },
-            [EVENT.ON_EXECUTE]: {
-                nextState: STATE.EXECUTED,
-                action: () => { this.#calculator.calculate(); },
-            },
-            [EVENT.ON_CLEAR]: {
-                nextState: STATE.EMPTY,
-                action: () => { this.#clear(); },
-            },
-        },
-        [STATE.EXECUTED]: {
-            [EVENT.ON_NUMBER]: {
-                nextState: STATE.FIRST_NUMBER,
-                action: ({ number }) => { this.#calculator.setNumber1(number); },
-            },
-            [EVENT.ON_OPERATION]: {
-                nextState: STATE.FIRST_NUMBER_AND_OPERATION,
-                action: ({ operation }) => { this.#calculator.setOperation(operation); },
-            },
-            [EVENT.ON_EXECUTE]: {
-                nextState: STATE.EXECUTED,
-                action: () => { this.#calculator.setNumber2(this.#calculator.getNumber1()).calculate(); },
-            },
-            [EVENT.ON_CLEAR]: {
-                nextState: STATE.EMPTY,
-                action: () => { this.#clear(); },
-            },
-        },
-    };
 }

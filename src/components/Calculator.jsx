@@ -9,8 +9,8 @@ const Calculator = function () {
     const calculator = new CalculatorModel();
 
     return {
-      inputController: new CalculatorInputController(calculator),
-      outputController: new CalculatorOutputController(calculator),
+      inputController: new CalculatorInputController(calculator, { maxLength: 12 }),
+      outputController: new CalculatorOutputController(calculator, { maxLength: 12 }),
     };
   }, []);
 

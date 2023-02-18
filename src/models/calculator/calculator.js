@@ -1,4 +1,4 @@
-import { BasicCalculationEngine } from './calculation-engines';
+import { DecimalJsCalculationEngine } from './calculation-engines';
 import { StateManager } from './state-manager/state-manager';
 import { OneItemStorage } from './storage';
 
@@ -19,13 +19,15 @@ export class Calculator {
     #storage = null;
 
     constructor() {
-        this.#engine = new BasicCalculationEngine();
+        this.#engine = new DecimalJsCalculationEngine();
         this.#stateManager = new StateManager(this);
         this.#storage = new OneItemStorage();
     }
 
-    onEvent(event, eventData) {
+    onEvent(event, eventData = {}) {
         this.#stateManager.dispatch(event, eventData);
+
+        console.log('eventData', eventData);
     }
 
     getDebugData() {
@@ -55,10 +57,9 @@ export class Calculator {
         );
 
         if (isNaN(result) || !isFinite(result)) {
-            const err = new CalculationError(this);
             this.clear();
 
-            throw err;
+            throw new CalculationError(this);
         }
 
         // NOTE: shift values, operation remained unchanged.
@@ -103,11 +104,11 @@ export class Calculator {
         return this;
     }
 
-    save(value) {
+    memorySave(value) {
         this.#storage.save(value);
     }
 
-    restore() {
+    memoryRestore() {
         return this.#storage.restore();
     }
 }

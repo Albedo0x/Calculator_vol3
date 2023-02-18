@@ -6,14 +6,16 @@ export class CalculatorInputController {
     #numberBuffer;
     #buttonToActionMapping;
 
-    constructor (calculator) {
+    constructor (calculator, config = {}) {
         this.calculator = calculator;
+        this.config = config;
         this.#buttonToActionMapping = {
             byType: {
                 [ButtonType.Clear]: () => this.#onClear(),
                 [ButtonType.Execute]: () => this.#onExecute(),
                 [ButtonType.MemorySave]: () => this.#onMemorySave(),
                 [ButtonType.MemoryRestore]: () => this.#onMemoryRestore(),
+                [ButtonType.DecimalPoint]: () => this.#onDecimalPoint(),
             },
             byCategory: {
                 [ButtonCategory.Digit]: label => this.#onDigit(label),
@@ -25,7 +27,6 @@ export class CalculatorInputController {
 
     push(buttonOrButtons) {
         for (const button of toArray(buttonOrButtons)) {
-            // console.log(`push! [${button.label}]`);
             this.#pushOne(button);
         }
     }
@@ -40,19 +41,30 @@ export class CalculatorInputController {
         }
 
         calculatorAction.bind(this.calculator)(label);
-        // console.log(`state is ${this.calculator.state}`);
     }
 
     #clearBuffer() {
         this.#numberBuffer = '';
     }
 
-    #onDigit(digit) {
-        // FIXME: multiple entered points.
-        const append = (a, b) => `${a || 0}${b}`.replace(/\.+/g, '.');
+    #appendToNumberBuffer(value) {
+        this.#numberBuffer = `${this.#numberBuffer || 0}${value}`;
+    }
 
-        this.#numberBuffer = append(this.#numberBuffer, digit);
-        this.calculator.onEvent(EVENT.ON_NUMBER, { number: Number(this.#numberBuffer) });
+    #onDigit(digit) {
+        const { maxLength } = this.config;
+
+        if (!maxLength || this.#numberBuffer.length < maxLength) {
+            this.#appendToNumberBuffer(digit);
+        }
+
+        this.calculator.onEvent(EVENT.ON_NUMBER, { number: Number(this.#numberBuffer), rawValue: this.#numberBuffer });
+    }
+
+    #onDecimalPoint() {
+        if (!this.#numberBuffer.includes('.')) {
+            this.#appendToNumberBuffer('.');
+        }
     }
 
     #onOperation(label) {
@@ -73,19 +85,22 @@ export class CalculatorInputController {
     #onMemorySave() {
         switch (this.calculator.state) {
             case STATE.FIRST_NUMBER:
-                return this.calculator.save(this.calculator.getNumber1());
+                return this.calculator.memorySave(this.calculator.getNumber1());
             case STATE.NUMBERS_AND_OPERATION:
-                return this.calculator.save(this.calculator.getNumber2());
+                return this.calculator.memorySave(this.calculator.getNumber2());
             case STATE.EXECUTED:
-                return this.calculator.save(this.calculator.getResult());
+                return this.calculator.memorySave(this.calculator.getResult());
             default:
                 // no default
         }
     }
 
     #onMemoryRestore() {
-        const value = this.calculator.restore();
+        const value = this.calculator.memoryRestore();
 
-        this.calculator.onEvent(EVENT.ON_NUMBER, { number: value });
+        if (value || value === 0) {
+            this.#numberBuffer = value.toString();
+            this.calculator.onEvent(EVENT.ON_NUMBER, { number: Number(value), rawValue: value });
+        }
     }
 }

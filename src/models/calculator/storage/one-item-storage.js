@@ -6,6 +6,6 @@ export class OneItemStorage {
     };
 
     restore() {
-        return Number(localStorage.getItem(OneItemStorage.#key));
+        return localStorage.getItem(OneItemStorage.#key);
     };
 }

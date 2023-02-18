@@ -1,21 +1,5 @@
 import { ButtonType } from './constants';
-import { digitButtons } from './categories/digits';
-import { operationButtons } from './categories/operations';
-import { memoryButtons } from './categories/memory';
-import { miscButtons } from './categories/misc';
-
-const buttons = [
-    ...digitButtons,
-    ...operationButtons,
-    ...memoryButtons,
-    ...miscButtons,
-];
-
-const buttonsMappedByType = buttons.reduce((acc, button) => {
-    acc[button.type] = button;
-
-    return acc;
-}, {});
+import { buttonsByType } from './buttons';
 
 const BT = ButtonType;
 const buttonTypeLayout = [
@@ -24,7 +8,6 @@ const buttonTypeLayout = [
     BT.Digit4,        BT.Digit5,       BT.Digit6,     BT.Subtract,
     BT.Digit1,        BT.Digit2,       BT.Digit3,     BT.Add,
     BT.Digit0,        BT.DecimalPoint, BT.Execute,
-    // BT.Exponent,      BT.Digit0, BT.DecimalPoint, BT.Execute,
 ];
 
-export const layout = buttonTypeLayout.map(buttonType => buttonsMappedByType[buttonType]);
+export const layout = buttonTypeLayout.map(buttonType => buttonsByType[buttonType]);
