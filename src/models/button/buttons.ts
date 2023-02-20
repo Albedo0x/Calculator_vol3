@@ -1,8 +1,11 @@
-
-import { digitButtons } from './categories/digits';
-import { operationButtons } from './categories/operations';
-import { memoryButtons } from './categories/memory';
-import { miscButtons } from './categories/misc';
+import { Button } from './button';
+import {
+    digitButtons,
+    operationButtons,
+    memoryButtons,
+    miscButtons,
+} from './categories';
+import { ButtonType } from './types';
 
 export const buttons = [
     ...digitButtons,
@@ -15,4 +18,4 @@ export const buttonsByType = buttons.reduce((acc, button) => {
     acc[button.type] = button;
 
     return acc;
-}, {});
+}, {} as Record<ButtonType, Button>);

@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo } from 'react';
 import ButtonList from "./ButtonList";
 import CalcScreen from "./CalcScreen";
 import { Calculator as CalculatorModel, CalculatorInputController, CalculatorOutputController } from '../models';
@@ -9,12 +9,12 @@ const Calculator = function () {
     const calculator = new CalculatorModel();
 
     return {
-      inputController: new CalculatorInputController(calculator, { maxLength: 12 }),
-      outputController: new CalculatorOutputController(calculator, { maxLength: 12 }),
+      inputController: new CalculatorInputController(calculator, { maxLength: 9 }),
+      outputController: new CalculatorOutputController(calculator, { maxLength: 9 }),
     };
   }, []);
 
-  const handleButtonPush = (button) => {
+  const handleButtonPush = (button: any) => {
     inputController.push(button);
     setScreen(outputController.getView());
   }

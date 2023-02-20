@@ -1,15 +1,15 @@
-import { Calculator } from './calculator';
-import { OPERATION, STATE } from './constants';
+import { CalculationError, Calculator } from './calculator';
+import { State, Operation } from './types';
 
 describe('Calculator', () => {
-    let calculator = null;
+    let calculator: Calculator;
     beforeEach(() => {
         calculator = new Calculator();
     });
 
     describe('States', () => {
         test('Initial', () => {
-            expect(calculator.state).toBe(STATE.EMPTY);
+            expect(calculator.state).toBe(State.Empty);
         });
     });
 
@@ -33,7 +33,7 @@ describe('Calculator', () => {
                 calc.setNumber1(2);
                 calc.setNumber2(10);
 
-                expect(() => calc.calculate()).toThrow('Unknown operation');
+                expect(() => calc.calculate()).toThrow(CalculationError);
             });
         });
     });
@@ -43,7 +43,7 @@ describe('Calculator', () => {
             test('Integers', () => {
                 calculator.setNumber1(12.5);
                 calculator.setNumber2(7);
-                calculator.setOperation(OPERATION.ADD);
+                calculator.setOperation(Operation.Add);
 
                 calculator.calculate();
 
@@ -55,7 +55,7 @@ describe('Calculator', () => {
             test('Integers', () => {
                 calculator.setNumber1(98);
                 calculator.setNumber2(89);
-                calculator.setOperation(OPERATION.SUBTRACT);
+                calculator.setOperation(Operation.Subtract);
 
                 calculator.calculate();
 
@@ -65,7 +65,7 @@ describe('Calculator', () => {
 
         describe('Division', () => {
             test('Integers', () => {
-                calculator.setOperation(OPERATION.DIVIDE);
+                calculator.setOperation(Operation.Divide);
                 calculator.setNumber1(20);
                 calculator.setNumber2(5);
 
@@ -78,7 +78,7 @@ describe('Calculator', () => {
         describe('Exponent', () => {
             test('Integers', () => {
                 calculator.setNumber1(2);
-                calculator.setOperation(OPERATION.EXPONENT);
+                calculator.setOperation(Operation.Exponent);
                 calculator.setNumber2(10);
 
                 calculator.calculate();
@@ -94,11 +94,11 @@ describe('Calculator', () => {
 
             calc.setNumber1(4);
             calc.setNumber2(2);
-            calc.setOperation(OPERATION.MULTIPLY);
+            calc.setOperation(Operation.Multiply);
             calc.calculate();
 
             calc.setNumber2(2);
-            calc.setOperation(OPERATION.ADD);
+            calc.setOperation(Operation.Add);
 
             calc.calculate();
 
@@ -113,7 +113,7 @@ describe('Calculator', () => {
 
         describe('Memory save & restore', () => {
             test('Saves and restores number', () => {
-                const number = '987';
+                const number = 987;
 
                 calculator.memorySave(number);
                 const savedNumber = calculator.memoryRestore();

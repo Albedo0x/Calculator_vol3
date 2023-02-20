@@ -1,5 +1,6 @@
-import { ButtonType } from './constants';
+import { ButtonType } from './types';
 import { buttonsByType } from './buttons';
+import { Button } from './button';
 
 const BT = ButtonType;
 const buttonTypeLayout = [
@@ -10,4 +11,4 @@ const buttonTypeLayout = [
     BT.Digit0,        BT.DecimalPoint, BT.Execute,
 ];
 
-export const layout = buttonTypeLayout.map(buttonType => buttonsByType[buttonType]);
+export const layout: Button[] = buttonTypeLayout.map(buttonType => buttonsByType[buttonType]);

@@ -1,9 +1,10 @@
-import { ButtonType, ButtonCategory } from '../constants';
+import { Button } from '../button';
+import { ButtonType, ButtonCategory } from '../types';
 
 const category = ButtonCategory.Digit;
 const className = 'btn-digit';
 
-export const digitButtons = [
+export const digitButtons: Button[] = [
     { type: ButtonType.Digit0, category, label: '0', className },
     { type: ButtonType.Digit1, category, label: '1', className },
     { type: ButtonType.Digit2, category, label: '2', className },

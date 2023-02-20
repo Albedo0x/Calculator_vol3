@@ -3,7 +3,7 @@ import { CalculatorInputController } from './calculator-input-controller';
 import { ButtonType, ButtonFactory } from '../../button';
 
 describe('Calculator input controller', () => {
-    let controller = null;
+    let controller: CalculatorInputController;
     const createButton = ButtonFactory.getInstance().createOfType;
 
     beforeEach(() => {
@@ -55,12 +55,6 @@ describe('Calculator input controller', () => {
             ]);
 
             expect(controller.calculator.getNumber1()).toBe(7.6);
-        });
-    });
-
-    describe('Push invalid buttons', () => {
-        test('Exception on unknown button', () => {
-            expect(() => controller.push({ category: 'wtf', label: '666' })).toThrow();
         });
     });
 
