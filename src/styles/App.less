@@ -11,36 +11,29 @@
   justify-content: center;
   align-items: center;
   height: 100vh;
-  width: 100%;
-  background: @bg-cover;
+  background: linear-gradient(#e66465, #9198e5);
 }
 
 .calc {
   display: grid;
   grid-template-rows: 2fr 7fr;
   row-gap: 30px;
-  height: 600px;
+  height: 680px;
   width: 400px;
-  padding: 20px 10px 10px 10px;
+  padding: 20px 15px 15px 15px;
   border: #library.borders[secondary];
   border-radius: #library.border-rad[primary];
   background: @bg-color;
 
   @media @phone-tablet {
-    height: 500px;
+    height: 440px;
     width: 250px;
   }
 
   &-screen {
     display: grid;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    height: 100%;
 
     &__field {
-      width: 380px;
-      height: 100%;
       border: #library.borders[primary];
       border-radius: #library.border-rad[primary];
       font-size: 60px;
@@ -52,7 +45,6 @@
       overflow: hidden;
 
       @media @phone-tablet {
-        width: 230px;
         font-size: 40px;
       }
     }
@@ -62,16 +54,15 @@
     display: grid;
     justify-items: center;
     align-items: center;
-    grid-template-columns: 1fr 1fr 1fr 1fr;
-    grid-template-rows: 1fr 1fr 1fr 1fr 1fr;
+    grid-template-columns: repeat(4, minmax(36px, 1fr));
+    grid-template-rows: repeat(5, 1fr);
+    gap: 20px;
   }
 
   &-btn {
     display: grid;
     justify-content: center;
     align-content: center;
-    width: 65px;
-    height: 65px;
     color: @text-color;
     font-weight: bold;
     font-size: 36px;
@@ -79,15 +70,17 @@
     border-radius: #library.border-rad[primary];
     cursor: pointer;
     user-select: none;
+    align-self: stretch;
+    justify-self: stretch;
+    gap: 16px;
 
     &:last-child {
-      background-color: @result-color;
+      grid-column: 3 / span 2;
+      background-color:  @result-color;
     }
 
     @media @phone-tablet {
-      width: 40px;
-      height: 40px;
-      font-size: 24px;
+      font-size: 20px;
     }
 
     &:hover {
